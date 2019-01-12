@@ -15,3 +15,13 @@ Note that on some systems, you may need to use `dkp-pacman` instead, and you may
 It is not possible to use the libnx console and the GPU at the same time. For this reason, debugging output must be redirected to nxlink. All examples contain code that sets up stdout to redirect to the nxlink socket, however by default it's disabled. In order to enable it, you can `#define ENABLE_NXLINK` at the top of the file, or alternatively modify the Makefile to add `-DENABLE_NXLINK` to the `CFLAGS` variable.
 
 Additionally, mesa and nouveau are presently configured to support debugging output. Each example has a `setMesaConfig` function that controls debugging and shader optimization flags. Please refer to the source code of this function for more details.
+
+## Ogre3D Example
+
+The Ogre3D example in the ogre directory requires the following package to build:
+
+```bash
+pacman -S switch-mesa switch-glad switch-ogre
+```
+
+Copy the contents of the sdroot directory to the root of your SD card (the ogre folder) prior to starting the demo application.
