@@ -53,6 +53,8 @@ protected:
     Ogre::String mPluginsCfg;
 
     Ogre::RTShader::ShaderGenerator *mShaderGenerator;
+
+    uint8_t mOperationMode;
 };
 
 #endif // #ifndef __Application_h_

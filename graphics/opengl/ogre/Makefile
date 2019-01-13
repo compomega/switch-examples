@@ -39,7 +39,7 @@ EXEFS_SRC	:=	exefs_src
 OGRE_INCS   := -I$(PORTLIBS)/include/OGRE \
 	-I$(PORTLIBS)/include/OGRE/Bites \
 	-I$(PORTLIBS)/include/OGRE/RTShaderSystem
-#ROMFS	:=	romfs
+ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
 # options for code generation

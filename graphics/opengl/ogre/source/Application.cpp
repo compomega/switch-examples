@@ -8,9 +8,16 @@
 
 #include <RenderSystems/GL3Plus/OgreGL3PlusPlugin.h>
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif // __SWITCH__
+
 Application::Application() : mRoot(0), mCamera(0), mCameraNode(0),
     mSceneMgr(0), mWindow(0), mViewport(0), mOgreNode(0)
 {
+#ifdef __SWITCH__
+    mOperationMode = appletGetOperationMode();
+#endif // __SWITCH__
 }
 
 Application::~Application()
@@ -93,7 +100,7 @@ void Application::setupResources()
     resMan.createResourceGroup("Demo", false);
 
     // Add the game directory to the resource search path
-    resMan.addResourceLocation("Demo", "FileSystem", "Demo");
+    resMan.addResourceLocation("romfs:/Demo", "FileSystem", "Demo");
 }
 
 void Application::createResourceListener()
@@ -123,6 +130,11 @@ void Application::go()
 
 bool Application::setup()
 {
+    // Disable the logging to Ogre.log (in the current working directory).
+    bool suppressLogFile = true; // set to false to get your log file
+    Ogre::LogManager *logManager = new Ogre::LogManager();
+    logManager->createLog("ogre.log", true, true, suppressLogFile);
+
     mRoot = new Ogre::Root(mPluginsCfg);
 
     setupResources();
@@ -158,7 +170,7 @@ bool Application::setup()
 
 void Application::setupRTSS()
 {
-    std::string shaderLibPath = "Media/RTShaderLib";
+    std::string shaderLibPath = "romfs:/Media/RTShaderLib";
     std::string shaderCachePath = "Cache";
 
     if(Ogre::RTShader::ShaderGenerator::initialize())
@@ -168,10 +180,11 @@ void Application::setupRTSS()
         Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
             shaderLibPath, "FileSystem");
         Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-            shaderLibPath+"/GLSL", "FileSystem");
+            shaderLibPath + "/GLSL", "FileSystem");
 
 
-        mShaderGenerator->setShaderCachePath(shaderCachePath);
+        // Uncomment to get the shader cache.
+        // mShaderGenerator->setShaderCachePath(shaderCachePath);
         mShaderGenerator->addSceneManager(mSceneMgr);
 
         OgreBites::SGTechniqueResolverListener *materialMgrListener = 0;
@@ -197,6 +210,24 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
     {
         return false;
     }
+
+    // Pump the main loop
+    if(!appletMainLoop())
+    {
+        return false;
+    }
+
+#ifdef __SWITCH__
+    uint8_t operationMode = appletGetOperationMode();
+
+    // If the switch has switched between docked and handheld mode, trigger
+    // a notification to change the resolution of the window.
+    if(operationMode != mOperationMode)
+    {
+        mOperationMode = operationMode;
+        mWindow->windowMovedOrResized();
+    }
+#endif // __SWITCH__
 
     mOgreNode->rotate(Ogre::Vector3::UNIT_Y,
         Ogre::Degree(evt.timeSinceLastFrame * 30.0f));

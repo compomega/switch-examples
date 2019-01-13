@@ -34,37 +34,18 @@ int main(int argc, char* argv[])
     // Set mesa configuration (useful for debugging)
     setMesaConfig();
 
-    // Start in the right directory for resources and logging
-    if(0 == chdir("/ogre"))
-    {
-        // Create Application object and start the demo
-        Application app;
-        app.go();
-    }
-    else
-    {
-        // The directory does not exist. Show the error.
-        consoleInit(NULL);
+    // Start in the right directory for logging (if enabled).
+    chdir("/ogre");
 
-        printf("Directory 'ogre' is not on the root of the SD card.\n"
-            "Press the + button to exit.\n");
+    // Init the romfs
+    romfsInit();
 
-        // Main loop
-        while(appletMainLoop())
-        {
-            //Scan all the inputs. This should be done once for each frame
-            hidScanInput();
+    // Create Application object and start the demo
+    Application app;
+    app.go();
 
-            //hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
-            u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-            if (kDown & KEY_PLUS) break; // break in order to return to hbmenu
-
-            consoleUpdate(NULL);
-        }
-
-        consoleExit(NULL);
-    }
+    // Cleanup romfs
+    romfsExit();
 
     return 0;
 }
