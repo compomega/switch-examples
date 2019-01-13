@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     setMesaConfig();
 
     // Start in the right directory for logging (if enabled).
-    chdir("/ogre");
+    // chdir("/ogre");
 
     // Init the romfs
     romfsInit();
