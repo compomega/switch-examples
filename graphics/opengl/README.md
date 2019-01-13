@@ -23,5 +23,3 @@ The Ogre3D example in the ogre directory requires the following package to build
 ```bash
 pacman -S switch-mesa switch-ogre
 ```
-
-Copy the contents of the sdroot directory to the root of your SD card (the ogre folder) prior to starting the demo application.
